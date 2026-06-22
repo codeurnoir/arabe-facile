@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>200 Mots Arabes Essentiels</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0806;
+    --surface: #13100d;
+    --card: #1c1710;
+    --gold: #c9933a;
+    --gold-light: #e8b86d;
+    --gold-pale: #f5deb3;
+    --red: #8b2020;
+    --green: #2d6a4f;
+    --blue: #1a3a5c;
+    --purple: #4a2060;
+    --teal: #1a5c5c;
+    --orange: #8b4a00;
+    --text: #f0e8d8;
+    --text-dim: #a89070;
+    --border: rgba(201,147,58,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    background: radial-gradient(ellipse at 50% 0%, rgba(201,147,58,0.08) 0%, transparent 70%);
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .arabic-title {
+    font-family: 'Amiri', serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 8px;
+    text-shadow: 0 0 40px rgba(201,147,58,0.3);
+    direction: rtl;
+  }
+
+  .french-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+  }
+
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--gold);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* Search & Filter */
+  .controls {
+    padding: 30px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 200px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-box:focus { border-color: var(--gold); }
+  .search-box::placeholder { color: var(--text-dim); }
+
+  .mode-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 20px;
+    color: var(--text-dim);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  .mode-btn:hover, .mode-btn.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(201,147,58,0.05);
+  }
+
+  /* Category Tabs */
+  .tabs {
+    padding: 0 20px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tab:hover { color: var(--text); border-color: rgba(201,147,58,0.4); }
+
+  .tab.active {
+    color: var(--bg);
+    border-color: transparent;
+    font-weight: 500;
+  }
+
+  /* Words Grid */
+  .words-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  /* Word Card */
+  .word-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.3s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .word-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    border-radius: 12px 0 0 12px;
+  }
+
+  .word-card:hover {
+    border-color: rgba(201,147,58,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+
+  .word-card.expanded {
+    border-color: var(--gold);
+    background: #201a10;
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .arabic-word {
+    font-family: 'Amiri', serif;
+    font-size: 2rem;
+    color: var(--gold-light);
+    direction: rtl;
+    line-height: 1.2;
+  }
+
+  .word-num {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.05);
+    padding: 3px 8px;
+    border-radius: 100px;
+    flex-shrink: 0;
+  }
+
+  .transliteration {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 4px;
+  }
+
+  .translation {
+    font-size: 1rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* Expanded content */
+  .card-detail {
+    display: none;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .word-card.expanded .card-detail { display: block; }
+
+  .detail-section {
+    margin-bottom: 14px;
+  }
+
+  .detail-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .example-ar {
+    font-family: 'Amiri', serif;
+    font-size: 1.2rem;
+    color: var(--gold-pale);
+    direction: rtl;
+    text-align: right;
+    line-height: 1.8;
+    margin-bottom: 4px;
+  }
+
+  .example-fr {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .mnemonic {
+    background: rgba(201,147,58,0.07);
+    border: 1px solid rgba(201,147,58,0.2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.87rem;
+    color: var(--gold-pale);
+    line-height: 1.5;
+  }
+
+  .mnemonic-icon {
+    font-size: 1rem;
+    margin-right: 6px;
+  }
+
+  /* Category colors */
+  [data-cat="salutations"] .word-card::before { background: var(--green); }
+  [data-cat="salutations"] .tab.active { background: var(--green); }
+
+  [data-cat="nourriture"] .word-card::before { background: var(--orange); }
+  [data-cat="nourriture"] .tab.active { background: var(--orange); }
+
+  [data-cat="directions"] .word-card::before { background: var(--blue); }
+  [data-cat="directions"] .tab.active { background: var(--blue); }
+
+  [data-cat="chiffres"] .word-card::before { background: var(--purple); }
+  [data-cat="chiffres"] .tab.active { background: var(--purple); }
+
+  [data-cat="famille"] .word-card::before { background: var(--red); }
+  [data-cat="famille"] .tab.active { background: var(--red); }
+
+  [data-cat="temps"] .word-card::before { background: var(--teal); }
+  [data-cat="temps"] .tab.active { background: var(--teal); }
+
+  [data-cat="corps"] .word-card::before { background: #5a3a6a; }
+  [data-cat="corps"] .tab.active { background: #5a3a6a; }
+
+  [data-cat="verbes"] .word-card::before { background: #2a4a2a; }
+  [data-cat="verbes"] .tab.active { background: #2a4a2a; }
+
+  [data-cat="emotions"] .word-card::before { background: #6a2a2a; }
+  [data-cat="emotions"] .tab.active { background: #6a2a2a; }
+
+  [data-cat="quotidien"] .word-card::before { background: #4a4a1a; }
+  [data-cat="quotidien"] .tab.active { background: #4a4a1a; }
+
+  [data-cat="nature"] .word-card::before { background: #1a4a3a; }
+  [data-cat="nature"] .tab.active { background: #1a4a3a; }
+
+  .tab.active[data-cat="all"] { background: var(--gold); color: var(--bg); }
+
+  /* Progress bar */
+  .progress-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: rgba(201,147,58,0.15);
+    z-index: 100;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transition: width 0.3s;
+  }
+
+  /* Count badge */
+  .count-badge {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    z-index: 100;
+  }
+
+  .count-badge span { color: var(--gold); font-weight: 500; }
+
+  .no-results {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 60px;
+    color: var(--text-dim);
+    font-size: 1.1rem;
+  }
+
+  /* Category emoji */
+  .cat-emoji { font-size: 1rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="arabic-title">الكلمات الأساسية</div>
+  <div class="french-title">200 Mots Arabes Essentiels — Arabe Littéraire</div>
+  <div class="stats">
+    <div class="stat"><span class="stat-num">200</span><span class="stat-label">Mots</span></div>
+    <div class="stat"><span class="stat-num">11</span><span class="stat-label">Catégories</span></div>
+    <div class="stat"><span class="stat-num">200</span><span class="stat-label">Exemples</span></div>
+    <div class="stat"><span class="stat-num">60+</span><span class="stat-label">Mnémotechniques</span></div>
+  </div>
+</header>
+
+<div class="controls">
+  <input type="text" class="search-box" placeholder="🔍 Rechercher un mot en français ou arabe..." id="searchInput">
+  <button class="mode-btn" id="toggleMnemo" onclick="toggleMnemoOnly()">💡 Mots difficiles seulement</button>
+</div>
+
+<div class="tabs" id="tabsContainer"></div>
+
+<div class="words-container" id="wordsContainer"></div>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="count-badge">Affichés : <span id="countDisplay">0</span></div>
+
+<script>
+const categories = [
+  { id: 'all', label: 'Tous', emoji: '📚' },
+  { id: 'salutations', label: 'Salutations', emoji: '👋' },
+  { id: 'nourriture', label: 'Nourriture', emoji: '🍽️' },
+  { id: 'directions', label: 'Directions', emoji: '🧭' },
+  { id: 'chiffres', label: 'Chiffres', emoji: '🔢' },
+  { id: 'famille', label: 'Famille', emoji: '👨‍👩‍👧' },
+  { id: 'temps', label: 'Temps', emoji: '⏰' },
+  { id: 'corps', label: 'Corps', emoji: '🫀' },
+  { id: 'verbes', label: 'Verbes clés', emoji: '⚡' },
+  { id: 'emotions', label: 'Émotions', emoji: '💭' },
+  { id: 'quotidien', label: 'Quotidien', emoji: '🏠' },
+  { id: 'nature', label: 'Nature', emoji: '🌿' },
+];
+
+const words = [
+  // SALUTATIONS (20)
+  { id:1, cat:'salutations', ar:'السَّلَامُ عَلَيْكُم', tr:'as-salāmu ʿalaykum', fr:'Que la paix soit sur vous', ex_ar:'السَّلَامُ عَلَيْكُم، كَيْفَ حَالُكَ؟', ex_fr:'Que la paix soit sur vous, comment allez-vous ?', mnemonic:'🧠 "Salaam" ressemble à "Shalom" en hébreu — même racine sémitique SLM = paix. Incontournable !' },
+  { id:2, cat:'salutations', ar:'وَعَلَيْكُمُ السَّلَام', tr:'wa-ʿalaykumu s-salām', fr:'Et que la paix soit sur vous (réponse)', ex_ar:'وَعَلَيْكُمُ السَّلَام وَرَحْمَةُ اللَّهِ', ex_fr:'Et que la paix soit sur vous et la miséricorde de Dieu', mnemonic:'🧠 C\'est l\'écho de la salutation : tu répètes "salaam" en ajoutant "wa" (et) devant.' },
+  { id:3, cat:'salutations', ar:'مَرْحَبًا', tr:'marḥaban', fr:'Bonjour / Bienvenue', ex_ar:'مَرْحَبًا بِكَ فِي الرِّيَاض', ex_fr:'Bienvenue à Riyad', mnemonic:'🧠 "Marḥaban" vient de "raḥb" = espace large. Tu ouvres un espace pour l\'autre. Pense : "large accueil".' },
+  { id:4, cat:'salutations', ar:'أَهْلاً', tr:'ahlan', fr:'Salut / Bienvenue (familier)', ex_ar:'أَهْلاً، مَاذَا تُرِيدُ؟', ex_fr:'Salut, qu\'est-ce que tu veux ?', mnemonic:'🧠 "Ahlan" = famille (ahl). Tu accueilles l\'autre comme un membre de ta famille.' },
+  { id:5, cat:'salutations', ar:'كَيْفَ حَالُكَ؟', tr:'kayfa ḥāluk?', fr:'Comment vas-tu ?', ex_ar:'كَيْفَ حَالُكَ يَا صَدِيقِي؟', ex_fr:'Comment vas-tu, mon ami ?', mnemonic:'🧠 "Kayfa" = comment (pense : "quoi-pha"). "Haal" = état/condition. Simple !' },
+  { id:6, cat:'salutations', ar:'بِخَيْر', tr:'bi-khayr', fr:'Bien (réponse)', ex_ar:'أَنَا بِخَيْر، شُكْرًا', ex_fr:'Je vais bien, merci', mnemonic:'🧠 "Khayr" = bien/bonheur (pense à "khair" = meilleur). "Bi" = avec/en. "En bien !"' },
+  { id:7, cat:'salutations', ar:'شُكْرًا', tr:'shukran', fr:'Merci', ex_ar:'شُكْرًا جَزِيلًا عَلَى مُسَاعَدَتِكَ', ex_fr:'Merci beaucoup pour ton aide', mnemonic:'🧠 "Shukran" — imagine que tu "sucres" ta relation avec l\'autre en le remerciant. SHUKR = sucre de politesse.' },
+  { id:8, cat:'salutations', ar:'عَفْوًا', tr:'ʿafwan', fr:'De rien / Pardon', ex_ar:'عَفْوًا، لَمْ أَفْهَمْ', ex_fr:'Pardon, je n\'ai pas compris', mnemonic:'🧠 "Afwan" vient de "afw" = pardon/effacement. Tu effaces la dette de remerciement.' },
+  { id:9, cat:'salutations', ar:'مَعَ السَّلَامَة', tr:'maʿa s-salāma', fr:'Au revoir', ex_ar:'مَعَ السَّلَامَة، إِلَى اللِّقَاء', ex_fr:'Au revoir, à bientôt', mnemonic:'🧠 Littéralement "avec la sécurité/paix". Tu souhaites un voyage en paix. "Salāma" = sécurité.' },
+  { id:10, cat:'salutations', ar:'صَبَاحُ الخَيْر', tr:'ṣabāḥu l-khayr', fr:'Bonjour (matin)', ex_ar:'صَبَاحُ الخَيْر، كَيْفَ نِمْتَ؟', ex_fr:'Bonjour, comment as-tu dormi ?', mnemonic:'🧠 "Ṣabāḥ" = matin. "Khayr" = bien. Bonjour littéralement = "matin de bien". Élégant !' },
+  { id:11, cat:'salutations', ar:'صَبَاحُ النُّور', tr:'ṣabāḥu n-nūr', fr:'Bonjour (réponse poétique)', ex_ar:'صَبَاحُ الخَيْر! — صَبَاحُ النُّور!', ex_fr:'Bonjour ! — Bonjour (lumière) !', mnemonic:'🧠 "Nūr" = lumière. Tu réponds "matin de lumière" à "matin de bien". Pense à NEON = lumière.' },
+  { id:12, cat:'salutations', ar:'مَسَاءُ الخَيْر', tr:'masāʾu l-khayr', fr:'Bonsoir', ex_ar:'مَسَاءُ الخَيْر يَا أُسْتَاذ', ex_fr:'Bonsoir, monsieur le professeur', mnemonic:'🧠 "Masāʾ" = soir/soirée. Même structure que ṣabāḥ. Soir de bien = bonsoir.' },
+  { id:13, cat:'salutations', ar:'تَفَضَّل', tr:'tafaḍḍal', fr:'Je vous en prie / Entrez', ex_ar:'تَفَضَّل، اجْلِس', ex_fr:'Je vous en prie, asseyez-vous', mnemonic:'🧠 "Faḍl" = faveur/grâce. "Tafaḍḍal" = accorde-toi la faveur d\'entrer. Ultra-poli !' },
+  { id:14, cat:'salutations', ar:'مَن أَنتَ؟', tr:'man anta?', fr:'Qui es-tu ?', ex_ar:'مَن أَنتَ؟ مَا اسْمُكَ؟', ex_fr:'Qui es-tu ? Quel est ton nom ?', mnemonic:'🧠 "Man" = qui (pense à "man" en anglais mais en arabe = qui !). "Anta" = tu/toi.' },
+  { id:15, cat:'salutations', ar:'اسْمِي', tr:'ismī', fr:'Mon nom est...', ex_ar:'اسْمِي مُحَمَّد، وَأَنَا مِن الرِّيَاض', ex_fr:'Je m\'appelle Mohammed et je suis de Riyad', mnemonic:'🧠 "Ism" = nom. Le "i" final = mon. Pense à "ISM" = Identifiant de Son Moi.' },
+  { id:16, cat:'salutations', ar:'يَسْعَدُكَ', tr:'yisʿidak', fr:'Bonne chance / Que Dieu te rende heureux', ex_ar:'يَسْعَدُكَ يَا صَدِيقِي', ex_fr:'Que Dieu te rende heureux, mon ami', mnemonic:'🧠 "Saʿd" = bonheur (pense : "sad" à l\'envers = bonheur en arabe, paradoxalement !).' },
+  { id:17, cat:'salutations', ar:'إِلَى اللِّقَاء', tr:'ilā l-liqāʾ', fr:'À bientôt', ex_ar:'إِلَى اللِّقَاء غَدًا إِن شَاءَ اللَّه', ex_fr:'À bientôt demain, si Dieu le veut', mnemonic:'🧠 "Liqāʾ" = rencontre/retrouvaille. "Ilā" = vers. Vers la prochaine rencontre !' },
+  { id:18, cat:'salutations', ar:'إِن شَاءَ اللَّه', tr:'in shāʾa llāh', fr:'Si Dieu le veut (Inshallah)', ex_ar:'سَأَصِلُ غَدًا إِن شَاءَ اللَّه', ex_fr:'J\'arriverai demain, inch\'Allah', mnemonic:'🧠 Le plus célèbre mot arabe dans le monde ! "In" = si, "shāʾa" = voulut, "Allāh" = Dieu.' },
+  { id:19, cat:'salutations', ar:'مَبْرُوك', tr:'mabrūk', fr:'Félicitations', ex_ar:'مَبْرُوك عَلَى الزَّوَاج!', ex_fr:'Félicitations pour le mariage !', mnemonic:'🧠 "Bāraka" = bénédiction. "Mabrūk" = béni. Même racine que "Mubarak" (nom propre).' },
+  { id:20, cat:'salutations', ar:'يَلَّا', tr:'yallā', fr:'Allez / Viens / Dépêche-toi', ex_ar:'يَلَّا، نَذْهَبُ الآن!', ex_fr:'Allez, on y va maintenant !', mnemonic:'🧠 "Yallah" est passé dans le français populaire. Tu le connais déjà !' },
+
+  // NOURRITURE (20)
+  { id:21, cat:'nourriture', ar:'طَعَام', tr:'ṭaʿām', fr:'Nourriture / Repas', ex_ar:'الطَّعَامُ جَاهِز', ex_fr:'Le repas est prêt', mnemonic:'🧠 "Ṭaʿm" = goût/saveur. La nourriture, c\'est ce qui a du goût. "ṬAʿĀM" = TA-AM (la nourriture c\'est ce qu\'on TAME).' },
+  { id:22, cat:'nourriture', ar:'مَاء', tr:'māʾ', fr:'Eau', ex_ar:'أُرِيدُ كَأْسَ مَاء مِن فَضْلِكَ', ex_fr:'Je voudrais un verre d\'eau s\'il vous plaît', mnemonic:'🧠 "Māʾ" est ultra-court. Pense à "ma" en japonais (intervalle/vide) — l\'eau remplit le vide.' },
+  { id:23, cat:'nourriture', ar:'خُبْز', tr:'khubz', fr:'Pain', ex_ar:'نَأْكُلُ الخُبْزَ مَعَ الحُمُّص', ex_fr:'On mange le pain avec le houmous', mnemonic:'🧠 "Khubz" — pense à "KHUBZa" comme une "bosse" de pain. Le pain est bombé !' },
+  { id:24, cat:'nourriture', ar:'لَحْم', tr:'laḥm', fr:'Viande', ex_ar:'أَنَا لَا آكُلُ اللَّحْمَ الأَحْمَر', ex_fr:'Je ne mange pas la viande rouge', mnemonic:'🧠 Même racine que "lahm" en hébreu (viande). Racine sémitique commune LḤM.' },
+  { id:25, cat:'nourriture', ar:'أَرُزّ', tr:'aruzz', fr:'Riz', ex_ar:'الأَرُزُّ طَبَقٌ أَسَاسِيٌّ فِي السُّعُودِيَّة', ex_fr:'Le riz est un plat de base en Arabie', mnemonic:'🧠 "Aruzz" ressemble phonétiquement au mot "riz" européen ! Même origine linguistique.' },
+  { id:26, cat:'nourriture', ar:'دَجَاج', tr:'dajāj', fr:'Poulet', ex_ar:'أُحِبُّ الدَّجَاجَ المَشْوِي', ex_fr:'J\'aime le poulet grillé', mnemonic:'🧠 "Dajāj" — pense à "Dja-dja" comme le bruit du poulet qui glousse. D-D-D !' },
+  { id:27, cat:'nourriture', ar:'سَمَك', tr:'samak', fr:'Poisson', ex_ar:'أَكَلْنَا السَّمَكَ عَلَى الشَّاطِئ', ex_fr:'On a mangé du poisson sur la plage', mnemonic:'🧠 "Samak" — pense à "Sam-Ak" le pêcheur qui dit AK quand il attrape un poisson !' },
+  { id:28, cat:'nourriture', ar:'خُضَرَوَات', tr:'khuḍrawāt', fr:'Légumes', ex_ar:'يَجِبُ أَن نَأْكُلَ الخُضَرَوَاتِ يَوْمِيًّا', ex_fr:'Il faut manger des légumes tous les jours', mnemonic:'🧠 "Khudra" = vert. Les légumes = les choses vertes. Pense : "KHODRA" = couleur verte en dialecte.' },
+  { id:29, cat:'nourriture', ar:'فَاكِهَة', tr:'fākiha', fr:'Fruit', ex_ar:'أُحِبُّ الفَاكِهَةَ الطَّازَجَة', ex_fr:'J\'aime les fruits frais', mnemonic:'🧠 "Fākiha" — pense à "FAKIE" comme un fruit juteux qu\'on mange en faisant "miam".' },
+  { id:30, cat:'nourriture', ar:'حَلِيب', tr:'ḥalīb', fr:'Lait', ex_ar:'أَشْرَبُ الحَلِيبَ كُلَّ صَبَاح', ex_fr:'Je bois du lait chaque matin', mnemonic:'🧠 "Ḥalīb" — pense à "HALIB" qui ressemble à "GALIB" (gaulois) avec du lait. HA-LITRE !' },
+  { id:31, cat:'nourriture', ar:'قَهْوَة', tr:'qahwa', fr:'Café', ex_ar:'قَهْوَةٌ بِدُونِ سُكَّر مِن فَضْلِكَ', ex_fr:'Un café sans sucre s\'il vous plaît', mnemonic:'🧠 Le mot "café" vient de l\'arabe "qahwa" ! Le turc dit "kahve", le français dit "café". Même mot !' },
+  { id:32, cat:'nourriture', ar:'شَاي', tr:'shāy', fr:'Thé', ex_ar:'نَشْرَبُ الشَّايَ بَعْدَ العَشَاء', ex_fr:'On boit le thé après le dîner', mnemonic:'🧠 "Shāy" ressemble à "chai" (thé épicé indien). Même mot voyagé via les routes commerciales.' },
+  { id:33, cat:'nourriture', ar:'سُكَّر', tr:'sukkar', fr:'Sucre', ex_ar:'أُضِيفُ القَلِيلَ مِنَ السُّكَّرِ', ex_fr:'J\'ajoute un peu de sucre', mnemonic:'🧠 "Sukkar" → "SUCRE" en français ! Le mot sucre vient directement de l\'arabe sukkar.' },
+  { id:34, cat:'nourriture', ar:'مِلْح', tr:'milḥ', fr:'Sel', ex_ar:'الطَّعَامُ يَحْتَاجُ مِلْحًا', ex_fr:'Le plat a besoin de sel', mnemonic:'🧠 "Milḥ" ressemble au latin "sal" mais pense à "mi-LAC" — le lac salé. MER-ELCH.' },
+  { id:35, cat:'nourriture', ar:'بَيْض', tr:'bayḍ', fr:'Œuf(s)', ex_ar:'أُرِيدُ بَيْضًا مَقْلِيًّا', ex_fr:'Je voudrais des œufs frits', mnemonic:'🧠 "Bayḍ" — "BAID" en dialecte. Pense à "BID" (offre) : l\'œuf est l\'offre parfaite du poulet !' },
+  { id:36, cat:'nourriture', ar:'زَيْت', tr:'zayt', fr:'Huile', ex_ar:'نَطْبُخُ بِزَيْتِ الزَّيْتُون', ex_fr:'On cuisine avec de l\'huile d\'olive', mnemonic:'🧠 "Zayt" → "ZEIT" (temps en allemand). L\'huile, c\'est du TEMPS distillé dans les olives !' },
+  { id:37, cat:'nourriture', ar:'مَطْعَم', tr:'maṭʿam', fr:'Restaurant', ex_ar:'هَذَا المَطْعَمُ مَشْهُور جِدًّا', ex_fr:'Ce restaurant est très connu', mnemonic:'🧠 "Maṭʿam" = lieu de nourriture. "Ṭaʿām" (nourriture) + "ma-" = lieu de. MAT-ʿAM = MANGE-MIAM.' },
+  { id:38, cat:'nourriture', ar:'جَوْعَان', tr:'jawʿān', fr:'Affamé / J\'ai faim', ex_ar:'أَنَا جَوْعَان، هَل عِنْدَكَ طَعَام؟', ex_fr:'J\'ai faim, tu as de la nourriture ?', mnemonic:'🧠 "Jawʿ" = faim. "Jūʿān" = celui qui a faim. Pense à "JOW" (je veux manger).' },
+  { id:39, cat:'nourriture', ar:'عَطْشَان', tr:'ʿaṭshān', fr:'Assoiffé / J\'ai soif', ex_ar:'أَنَا عَطْشَان جِدًّا، اِجْلُبْ مَاء', ex_fr:'J\'ai très soif, apporte de l\'eau', mnemonic:'🧠 "ʿAṭsh" = soif. Le ʿayn (ع) est la lettre de la gorge — tu sens la sécheresse !' },
+  { id:40, cat:'nourriture', ar:'لَذِيذ', tr:'ladhīdh', fr:'Délicieux', ex_ar:'هَذَا الأَكْلُ لَذِيذٌ جِدًّا', ex_fr:'Ce plat est vraiment délicieux', mnemonic:'🧠 "Ladhīdh" — pense à "LA DISH" (la assiette) pleine de bonnes choses. Délicieux !' },
+
+  // DIRECTIONS (20)
+  { id:41, cat:'directions', ar:'يَمِين', tr:'yamīn', fr:'Droite', ex_ar:'اِنْعَطِف يَمِينًا عِنْدَ الإِشَارَة', ex_fr:'Tourne à droite au feu rouge', mnemonic:'🧠 "Yamīn" = droite ET serment en arabe (la main droite pour jurer). YAMIN = MAIN DROITE.' },
+  { id:42, cat:'directions', ar:'يَسَار', tr:'yasār', fr:'Gauche', ex_ar:'المَسْجِدُ عَلَى اليَسَار', ex_fr:'La mosquée est à gauche', mnemonic:'🧠 "Yasār" ressemble à "yasar" = facilité/aisance. La gauche, c\'est le côté "libre" (pas le côté du serment).' },
+  { id:43, cat:'directions', ar:'أَمَام', tr:'amām', fr:'Devant', ex_ar:'المَحَطَّةُ أَمَامَنَا', ex_fr:'La gare est devant nous', mnemonic:'🧠 "Amām" — répète deux fois : A-MAM, A-MAM. Devant toi, tu avances. Double son = double direction.' },
+  { id:44, cat:'directions', ar:'خَلْف', tr:'khalf', fr:'Derrière', ex_ar:'السَّيَّارَةُ خَلْفَ البَيْت', ex_fr:'La voiture est derrière la maison', mnemonic:'🧠 "Khalf" — pense à "HALF-back" au football américain : il est derrière. KHALF = behind.' },
+  { id:45, cat:'directions', ar:'شِمَال', tr:'shimāl', fr:'Nord', ex_ar:'مَكَّةُ تَقَعُ فِي غَرْبِ المَمْلَكَة', ex_fr:'La Mecque est à l\'ouest du royaume', mnemonic:'🧠 "Shimāl" = nord ET gauche en arabe classique. Le nord est à gauche quand on regarde l\'est (lever du soleil).' },
+  { id:46, cat:'directions', ar:'جَنُوب', tr:'janūb', fr:'Sud', ex_ar:'عَسِيرُ مِنْطَقَةٌ فِي جَنُوبِ المَمْلَكَة', ex_fr:'Asir est une région du sud du royaume', mnemonic:'🧠 "Janūb" — pense à "JUNE" (juin) = le soleil est au sud en hiver, chaud en été. JAN = soleil du sud.' },
+  { id:47, cat:'directions', ar:'شَرْق', tr:'sharq', fr:'Est', ex_ar:'الشَّمْسُ تَشْرُقُ مِنَ الشَّرْق', ex_fr:'Le soleil se lève à l\'est', mnemonic:'🧠 "Sharq" = est ET lever du soleil ! "Shurūq" = lever du soleil. Est = là où ça "chauffe" (sharq !)' },
+  { id:48, cat:'directions', ar:'غَرْب', tr:'gharb', fr:'Ouest', ex_ar:'تَغْرُبُ الشَّمْسُ فِي الغَرْب', ex_fr:'Le soleil se couche à l\'ouest', mnemonic:'🧠 "Gharb" = ouest ET étranger/inconnu (maghreb = occident). Le soleil "disparaît" vers l\'inconnu.' },
+  { id:49, cat:'directions', ar:'هُنَا', tr:'hunā', fr:'Ici', ex_ar:'اِنْتَظِر هُنَا، سَأَعُود', ex_fr:'Attends ici, je vais revenir', mnemonic:'🧠 "Hunā" — très court, pense à "HU-NA" = ICI-NAM (ici maintenant). H-U-N-A.' },
+  { id:50, cat:'directions', ar:'هُنَاك', tr:'hunāk', fr:'Là-bas', ex_ar:'المَسْجِدُ هُنَاك بَعِيد', ex_fr:'La mosquée est là-bas, loin', mnemonic:'🧠 "Hunāka" = hunā (ici) + ka (suffixe éloignement). Ici + éloignement = là-bas !' },
+  { id:51, cat:'directions', ar:'قَرِيب', tr:'qarīb', fr:'Proche / Bientôt', ex_ar:'المَحَطَّةُ قَرِيبَةٌ مِن هُنَا', ex_fr:'La station est proche d\'ici', mnemonic:'🧠 "Qarīb" = proche. Pense à "CARIBOU" qui court vite et arrive près de toi rapidement !' },
+  { id:52, cat:'directions', ar:'بَعِيد', tr:'baʿīd', fr:'Loin', ex_ar:'البَيْتُ بَعِيدٌ جِدًّا', ex_fr:'La maison est très loin', mnemonic:'🧠 "Baʿīd" — pense à "BEYOND" (au-delà). B-Aʿ-ID = Beyond And Into Distance.' },
+  { id:53, cat:'directions', ar:'شَارِع', tr:'shāriʿ', fr:'Rue', ex_ar:'عِشْ فِي شَارِعِ الأَمِير', ex_fr:'Il habite rue du Prince', mnemonic:'🧠 "Shāriʿ" — pense à "SHARE-it" : une rue, c\'est ce qu\'on partage entre voisins !' },
+  { id:54, cat:'directions', ar:'مَيْدَان', tr:'maydān', fr:'Place publique', ex_ar:'نَلْتَقِي فِي المَيْدَان الكَبِير', ex_fr:'On se retrouve sur la grande place', mnemonic:'🧠 "Maydān" → "MAIDEN" en anglais (Place des jeunes filles). Le mot est passé en turc, persan, russe !' },
+  { id:55, cat:'directions', ar:'مَحَطَّة', tr:'maḥaṭṭa', fr:'Station / Arrêt', ex_ar:'أَيْنَ أَقْرَبُ مَحَطَّة مِتْرُو؟', ex_fr:'Où est la station de métro la plus proche ?', mnemonic:'🧠 "Maḥaṭṭa" = lieu où on s\'arrête (ḥaṭṭa = poser). Ma-HATTA = ma HALTE !' },
+  { id:56, cat:'directions', ar:'مَطَار', tr:'maṭār', fr:'Aéroport', ex_ar:'المَطَارُ بَعِيدٌ عَن المَدِينَة', ex_fr:'L\'aéroport est loin de la ville', mnemonic:'🧠 "Maṭār" vient de "ṭayarān" = vol. Lieu des avions. Ma-ṬĀR = MA ZONE DE VOL.' },
+  { id:57, cat:'directions', ar:'أَيْن', tr:'ayna', fr:'Où ?', ex_ar:'أَيْنَ الحَمَّام مِن فَضْلِكَ؟', ex_fr:'Où sont les toilettes s\'il vous plaît ?', mnemonic:'🧠 "Ayna" — ultra-court. Pense à "AIN" (œil en arabe) qui cherche : l\'œil cherche où aller.' },
+  { id:58, cat:'directions', ar:'كَيْف', tr:'kayfa', fr:'Comment ?', ex_ar:'كَيْفَ أَصِلُ إِلَى الفُنْدُق؟', ex_fr:'Comment est-ce que j\'arrive à l\'hôtel ?', mnemonic:'🧠 "Kayfa" — "KAY-FAR" : Kay veut aller FAR (loin) mais ne sait pas comment !' },
+  { id:59, cat:'directions', ar:'خَرِيطَة', tr:'kharīṭa', fr:'Carte / Plan', ex_ar:'هَل عِنْدَكَ خَرِيطَة المَدِينَة؟', ex_fr:'As-tu une carte de la ville ?', mnemonic:'🧠 "Kharīṭa" → en espagnol "garita" (guérite sur la carte). Même origine !' },
+  { id:60, cat:'directions', ar:'طَرِيق', tr:'ṭarīq', fr:'Route / Chemin', ex_ar:'هَذَا الطَّرِيقُ يُؤَدِّي إِلَى مَكَّة', ex_fr:'Cette route mène à La Mecque', mnemonic:'🧠 "Ṭarīq" = route. Pense au prénom TAREK qui signifie "celui qui frappe à la porte" = qui ouvre le chemin !' },
+
+  // CHIFFRES (15)
+  { id:61, cat:'chiffres', ar:'وَاحِد', tr:'wāḥid', fr:'Un (1)', ex_ar:'لَدَيَّ وَاحِدٌ فَقَط', ex_fr:'Je n\'en ai qu\'un', mnemonic:'🧠 "Wāḥid" → "WAHID" = prénom arabe commun. Un seul Wahid !' },
+  { id:62, cat:'chiffres', ar:'اِثْنَان', tr:'ithnān', fr:'Deux (2)', ex_ar:'عِنْدِي اِثْنَانِ مِنَ الأَوْلاَد', ex_fr:'J\'ai deux enfants', mnemonic:'🧠 "Ithnān" — pense à "ETHNIQUE à NANTES" = deux cultures. ITH-NAN.' },
+  { id:63, cat:'chiffres', ar:'ثَلَاثَة', tr:'thalātha', fr:'Trois (3)', ex_ar:'أَكَلْتُ ثَلَاثَةَ تُفَّاحَات', ex_fr:'J\'ai mangé trois pommes', mnemonic:'🧠 "Thalātha" ressemble à "TROIS-LATHA" : trois latas (boîtes) !' },
+  { id:64, cat:'chiffres', ar:'أَرْبَعَة', tr:'arbaʿa', fr:'Quatre (4)', ex_ar:'لَدَيَّ أَرْبَعَةُ إِخْوَة', ex_fr:'J\'ai quatre frères', mnemonic:'🧠 "Arbaʿa" — pense à ARBitRARy : Quatre lettres dans "FOUR". AR-BA-ʿA = 4 syllabes pour 4 !' },
+  { id:65, cat:'chiffres', ar:'خَمْسَة', tr:'khamsa', fr:'Cinq (5)', ex_ar:'فِي الأُسْبُوعِ خَمْسَةُ أَيَّامِ عَمَل', ex_fr:'Il y a cinq jours de travail dans la semaine', mnemonic:'🧠 "Khamsa" = 5 doigts de la main de Fatima (symbole connu). LA KHAMSA = 5 doigts !' },
+  { id:66, cat:'chiffres', ar:'سِتَّة', tr:'sitta', fr:'Six (6)', ex_ar:'فِي السَّاعَةِ السِّتَّة', ex_fr:'À six heures', mnemonic:'🧠 "Sitta" ressemble à "SIX-TA" : six + ta (toi). Six pour toi !' },
+  { id:67, cat:'chiffres', ar:'سَبْعَة', tr:'sabʿa', fr:'Sept (7)', ex_ar:'فِي السَّمَاءِ سَبْعُ طَبَقَات', ex_fr:'Il y a sept couches dans le ciel', mnemonic:'🧠 "Sabʿa" = 7. En Islam, 7 cieux, 7 tours du Kaaba. SABʿA = sacré 7 !' },
+  { id:68, cat:'chiffres', ar:'ثَمَانِيَة', tr:'thamāniya', fr:'Huit (8)', ex_ar:'تَعَلَّمْتُ ثَمَانِيَةَ كَلِمَات', ex_fr:'J\'ai appris huit mots', mnemonic:'🧠 "Thamāniya" — long comme 8 est un chiffre grand. THA-MĀ-NI-YA = 4 syllabes × 2 = 8 !' },
+  { id:69, cat:'chiffres', ar:'تِسْعَة', tr:'tisʿa', fr:'Neuf (9)', ex_ar:'فِي رَمَضَانَ الشَّهْرُ التَّاسِع', ex_fr:'Le Ramadan est le neuvième mois', mnemonic:'🧠 "Tisʿa" = 9. Pense à "TISS-A" = TISSER = 9 fils pour une belle toile !' },
+  { id:70, cat:'chiffres', ar:'عَشَرَة', tr:'ʿashara', fr:'Dix (10)', ex_ar:'اِشْتَرَيْتُ عَشَرَةَ كُتُب', ex_fr:'J\'ai acheté dix livres', mnemonic:'🧠 "ʿAshara" → "ʿASHURĀ" = 10e jour de Muharram. 10 = ʿASHARA !' },
+  { id:71, cat:'chiffres', ar:'مِئَة', tr:'miʾa', fr:'Cent (100)', ex_ar:'دَفَعْتُ مِئَةَ رِيَال', ex_fr:'J\'ai payé cent riyals', mnemonic:'🧠 "Miʾa" = 100. Pense à "MILLE" (mil en latin). MI-A = ME voilà à 100 !' },
+  { id:72, cat:'chiffres', ar:'أَلْف', tr:'alf', fr:'Mille (1000)', ex_ar:'أَلْفُ شُكْر عَلَى مُسَاعَدَتِكَ', ex_fr:'Mille mercis pour ton aide', mnemonic:'🧠 "Alf" = mille. "Alf Leila wa Leila" = Les Mille et Une Nuits. ALF = 1000 !' },
+  { id:73, cat:'chiffres', ar:'أَوَّل', tr:'awwal', fr:'Premier', ex_ar:'هَذِهِ المَرَّةُ الأُولَى', ex_fr:'C\'est la première fois', mnemonic:'🧠 "Awwal" ressemble à "OVAL" (l\'ovale du début, le zéro qui devient 1). AWW-WAL !' },
+  { id:74, cat:'chiffres', ar:'آخِر', tr:'ākhir', fr:'Dernier / Fin', ex_ar:'هَذَا آخِرُ يَوْم', ex_fr:'C\'est le dernier jour', mnemonic:'🧠 "Ākhir" → "AQUÍ" (ici en espagnol) mais à la fin. La FIN. ĀKH-IR = ARCHI-fin !' },
+  { id:75, cat:'chiffres', ar:'نِصْف', tr:'niṣf', fr:'Moitié / Demi', ex_ar:'أُرِيدُ نِصْفَ كِيلُو', ex_fr:'Je voudrais une demi-kilo', mnemonic:'🧠 "Niṣf" = moitié. Pense à "NI ceci NI cela" = la moitié entre les deux !' },
+
+  // FAMILLE (15)
+  { id:76, cat:'famille', ar:'أَب', tr:'ab', fr:'Père', ex_ar:'أَبِي طَبِيبٌ مَشْهُور', ex_fr:'Mon père est un médecin célèbre', mnemonic:'🧠 "Ab" = père. Ultra-court comme "pa/dad". Même racine "Abba" en araméen (père de Jésus) !' },
+  { id:77, cat:'famille', ar:'أُم', tr:'umm', fr:'Mère', ex_ar:'أُمِّي تَطْبُخُ كَثِيرًا', ex_fr:'Ma mère cuisine beaucoup', mnemonic:'🧠 "Umm" = mère. "Umm al-Qura" = Mère des villes (La Mecque). MOM en arabe !' },
+  { id:78, cat:'famille', ar:'أَخ', tr:'akh', fr:'Frère', ex_ar:'أَخِي يَعْمَلُ فِي الرِّيَاض', ex_fr:'Mon frère travaille à Riyad', mnemonic:'🧠 "Akh" = frère ET ami proche. "Akhī" = mon frère. AKH = je soupire pour mon frère !' },
+  { id:79, cat:'famille', ar:'أُخْت', tr:'ukht', fr:'Sœur', ex_ar:'أُخْتِي طَالِبَةٌ فِي الجَامِعَة', ex_fr:'Ma sœur est étudiante à l\'université', mnemonic:'🧠 "Ukht" = sœur. Pense à "OCHT" (dialecte "OCH" = oh ma sœur !)' },
+  { id:80, cat:'famille', ar:'اِبْن', tr:'ibn', fr:'Fils', ex_ar:'اِبْنِي عُمْرُهُ عَشْرُ سَنَوَات', ex_fr:'Mon fils a dix ans', mnemonic:'🧠 "Ibn" = fils. Prénom courant : Ibn Battuta, Ibn Sina (Avicenne). IBN = I\'m his Boy Now !' },
+  { id:81, cat:'famille', ar:'بِنْت', tr:'bint', fr:'Fille / Jeune femme', ex_ar:'بِنْتِي تُحِبُّ الرَّسْم', ex_fr:'Ma fille aime le dessin', mnemonic:'🧠 "Bint" = fille. Passé en argot britannique comme "bint" (fille). BINT = Be INTelligent (les filles !)' },
+  { id:82, cat:'famille', ar:'جَدّ', tr:'jadd', fr:'Grand-père', ex_ar:'جَدِّي قَصَّ عَلَيَّ قِصَصًا كَثِيرَة', ex_fr:'Mon grand-père m\'a raconté beaucoup d\'histoires', mnemonic:'🧠 "Jadd" = grand-père ET sérieux/grand effort. Le grand-père = le GRAND sérieux de la famille !' },
+  { id:83, cat:'famille', ar:'جَدَّة', tr:'jadda', fr:'Grand-mère', ex_ar:'جَدَّتِي تَعِيشُ فِي جَدَّة', ex_fr:'Ma grand-mère vit à Jeddah', mnemonic:'🧠 "Jadda" = grand-mère ET Jeddah (la ville) ! La ville des grand-mères anciennes !' },
+  { id:84, cat:'famille', ar:'زَوْج', tr:'zawj', fr:'Mari / Époux', ex_ar:'زَوْجِي رَجُلٌ طَيِّب', ex_fr:'Mon mari est un homme bien', mnemonic:'🧠 "Zawj" = mari ET paire/couple. Un mariage = deux qui forment une paire. ZAWJ = Z-OWE (je lui dois tout).' },
+  { id:85, cat:'famille', ar:'زَوْجَة', tr:'zawja', fr:'Femme / Épouse', ex_ar:'زَوْجَتِي طَبِيبَة', ex_fr:'Ma femme est médecin', mnemonic:'🧠 Même racine que zawj. Le "ta marbuta" (ة) féminise le mot. Zawja = l\'autre de la paire.' },
+  { id:86, cat:'famille', ar:'وَلَد', tr:'walad', fr:'Enfant / Garçon', ex_ar:'هَذَا الوَلَدُ شَقِيٌّ جِدًّا', ex_fr:'Ce garçon est très espiègle', mnemonic:'🧠 "Walad" → racine "w-l-d" = naissance. "Mawlid" = naissance du Prophète. WALAD naît !' },
+  { id:87, cat:'famille', ar:'أُسْرَة', tr:'usra', fr:'Famille', ex_ar:'أُسْرَتِي كَبِيرَة وَمُتَحَابَّة', ex_fr:'Ma famille est grande et aimante', mnemonic:'🧠 "Usra" = famille. Pense à "USURE" — la famille c\'est ce qui NE s\'use pas !' },
+  { id:88, cat:'famille', ar:'صَدِيق', tr:'ṣadīq', fr:'Ami', ex_ar:'هُوَ صَدِيقِي المَقْرُوب', ex_fr:'C\'est mon ami proche', mnemonic:'🧠 "Ṣadīq" vient de "ṣidq" = sincérité/vérité. Un ami = celui qui est sincère. SADIK = sincère.' },
+  { id:89, cat:'famille', ar:'جَار', tr:'jār', fr:'Voisin', ex_ar:'جَارُنَا كَرِيمٌ جِدًّا', ex_fr:'Notre voisin est très généreux', mnemonic:'🧠 "Jār" = voisin. Très respecté dans la culture arabe. JAR = celui à qui tu ouvres le JAR (pot).' },
+  { id:90, cat:'famille', ar:'عَائِلَة', tr:'ʿāʾila', fr:'Famille (étendue)', ex_ar:'عَائِلَتُنَا تَجْتَمِعُ كُلَّ عِيد', ex_fr:'Notre famille se réunit à chaque fête', mnemonic:'🧠 "ʿĀʾila" = famille. Pense à "Aïla" le prénom + famille = famille Aïla !' },
+
+  // TEMPS (15)
+  { id:91, cat:'temps', ar:'يَوْم', tr:'yawm', fr:'Jour', ex_ar:'كُلَّ يَوْمٍ أَتَعَلَّمُ شَيْئًا جَدِيدًا', ex_fr:'Chaque jour j\'apprends quelque chose de nouveau', mnemonic:'🧠 "Yawm" = jour. Le "jour du jugement" = "Yawm al-Qiyāma". YAWM = YOUR MoMent.' },
+  { id:92, cat:'temps', ar:'لَيْل', tr:'layl', fr:'Nuit', ex_ar:'أُحِبُّ النَّجُومَ فِي اللَّيْل', ex_fr:'J\'aime les étoiles la nuit', mnemonic:'🧠 "Layl" = nuit. Prénom célèbre Layla (de la nuit). Layla et Majnoun !' },
+  { id:93, cat:'temps', ar:'صَبَاح', tr:'ṣabāḥ', fr:'Matin', ex_ar:'أَسْتَيْقِظُ مُبَكِّرًا كُلَّ صَبَاح', ex_fr:'Je me réveille tôt chaque matin', mnemonic:'🧠 "Ṣabāḥ" = matin. Prénom commun en arabe. Déjà vu dans les salutations !' },
+  { id:94, cat:'temps', ar:'مَسَاء', tr:'masāʾ', fr:'Soir', ex_ar:'نَتَعَشَّى مَسَاءَ كُلَّ يَوْم', ex_fr:'On dîne chaque soir', mnemonic:'🧠 "Masāʾ" = soir. Le soleil "siffle" à sa disparition. MA-SA-Ā = MA SOIRÉE !' },
+  { id:95, cat:'temps', ar:'الآن', tr:'al-ān', fr:'Maintenant', ex_ar:'أَحْتَاجُ مُسَاعَدَتَكَ الآن', ex_fr:'J\'ai besoin de ton aide maintenant', mnemonic:'🧠 "Al-Ān" = maintenant. "AN" en hébreu aussi. Short and now = AL-ĀN !' },
+  { id:96, cat:'temps', ar:'غَدًا', tr:'ghadan', fr:'Demain', ex_ar:'سَأُسَافِرُ غَدًا إِلَى دُبَي', ex_fr:'Je voyagerai demain à Dubaï', mnemonic:'🧠 "Ghadan" = demain. GHA-DAN = "ça dans" le futur (le jour qui vient).' },
+  { id:97, cat:'temps', ar:'أَمْس', tr:'ams', fr:'Hier', ex_ar:'رَأَيْتُكَ أَمْسِ فِي السُّوق', ex_fr:'Je t\'ai vu hier au marché', mnemonic:'🧠 "Ams" = hier. Très court ! Pense à "AM-S" = I WAS (j\'étais) = passé !' },
+  { id:98, cat:'temps', ar:'أُسْبُوع', tr:'usbūʿ', fr:'Semaine', ex_ar:'الأُسْبُوعُ سَبْعَةُ أَيَّام', ex_fr:'La semaine a sept jours', mnemonic:'🧠 "Usbūʿ" vient de "sabʿa" = 7 ! La semaine = les 7 jours. US-BŪʿ = 7 BOOM !' },
+  { id:99, cat:'temps', ar:'شَهْر', tr:'shahr', fr:'Mois', ex_ar:'غَابَ شَهْرًا كَامِلاً', ex_fr:'Il est parti pendant un mois entier', mnemonic:'🧠 "Shahr" = mois ET renommée/célébrité. Un mois = une période de GLOIRE dans le temps.' },
+  { id:100, cat:'temps', ar:'سَنَة', tr:'sana', fr:'Année', ex_ar:'مَضَتْ سَنَةٌ سَرِيعًا', ex_fr:'L\'année est passée vite', mnemonic:'🧠 "Sana" = année ET en japonais "さな" = gentille. L\'année, c\'est un cycle gentil !' },
+  { id:101, cat:'temps', ar:'سَاعَة', tr:'sāʿa', fr:'Heure / Montre', ex_ar:'كَمِ السَّاعَةُ الآن؟', ex_fr:'Quelle heure est-il maintenant ?', mnemonic:'🧠 "Sāʿa" = heure ET montre. Pense à "SA-HA" = "ça, ici maintenant" dans le temps.' },
+  { id:102, cat:'temps', ar:'دَقِيقَة', tr:'daqīqa', fr:'Minute', ex_ar:'اِنْتَظِر دَقِيقَةً وَاحِدَة', ex_fr:'Attends une minute', mnemonic:'🧠 "Daqīqa" = minute ET précis/fin. Une minute = la précision du temps. DAQIQ = exact !' },
+  { id:103, cat:'temps', ar:'بَكْرًا', tr:'bakran', fr:'Tôt', ex_ar:'أَسْتَيْقِظُ بَكْرًا كُلَّ يَوْم', ex_fr:'Je me lève tôt chaque jour', mnemonic:'🧠 "Bakran" → "BAKRI" = celui qui se lève tôt. Le prénom Bakr = le "tôt levé" !' },
+  { id:104, cat:'temps', ar:'مُتَأَخِّرًا', tr:'mutaʾakhkhiran', fr:'En retard / Tard', ex_ar:'وَصَلَ مُتَأَخِّرًا إِلَى الاجْتِمَاع', ex_fr:'Il est arrivé en retard à la réunion', mnemonic:'🧠 "Mutaʾakhkhir" = retardataire. "Ākhir" = dernier. Muta-ĀKHIR = celui qui se retrouve à la FIN !' },
+  { id:105, cat:'temps', ar:'دَائِمًا', tr:'dāʾiman', fr:'Toujours', ex_ar:'أَنَا دَائِمًا هُنَا مِن أَجْلِكَ', ex_fr:'Je suis toujours là pour toi', mnemonic:'🧠 "Dāʾiman" = toujours. "Dāʾim" = permanent. DA-ĪM = "donne-im (toujours)" !' },
+
+  // CORPS (15)
+  { id:106, cat:'corps', ar:'رَأْس', tr:'raʾs', fr:'Tête', ex_ar:'يُؤْلِمُنِي رَأْسِي', ex_fr:'J\'ai mal à la tête', mnemonic:'🧠 "Raʾs" = tête. "Raʾs al-Khaymah" = tête de la tente (ville des EAU). RĀS = cap/tête !' },
+  { id:107, cat:'corps', ar:'عَيْن', tr:'ʿayn', fr:'Œil', ex_ar:'عَيْنَاهَا جَمِيلَتَان جِدًّا', ex_fr:'Ses yeux sont très beaux', mnemonic:'🧠 "ʿAyn" = œil ET source d\'eau ET lettre ع. Pense : l\'œil comme une SOURCE de regard !' },
+  { id:108, cat:'corps', ar:'أُذُن', tr:'udhun', fr:'Oreille', ex_ar:'أَلَمُ الأُذُنِ مُزْعِج', ex_fr:'La douleur d\'oreille est gênante', mnemonic:'🧠 "Udhun" — pense à "OUTZON" comme une antenne externe. L\'oreille = antenne !' },
+  { id:109, cat:'corps', ar:'فَم', tr:'fam', fr:'Bouche', ex_ar:'اِفْتَحْ فَمَكَ عِنْدَ الطَّبِيب', ex_fr:'Ouvre la bouche chez le médecin', mnemonic:'🧠 "Fam" = bouche. Ultra-court. FAMEUX = ce qui passe par la bouche (goût + parole) !' },
+  { id:110, cat:'corps', ar:'يَد', tr:'yad', fr:'Main', ex_ar:'أَعْطِنِي يَدَكَ مِن فَضْلِكَ', ex_fr:'Donne-moi ta main s\'il te plaît', mnemonic:'🧠 "Yad" = main. Ultra-court. Pense à "YAD" en hébreu aussi = main. Même racine !' },
+  { id:111, cat:'corps', ar:'قَدَم', tr:'qadam', fr:'Pied', ex_ar:'قَدَمِي تُؤْلِمُنِي بَعْدَ الرِّحْلَة', ex_fr:'Mon pied me fait mal après le voyage', mnemonic:'🧠 "Qadam" = pied ET pas/étape. Chaque pas = un qadam. QA-DAM = QUE D\'AVANCEMENT !' },
+  { id:112, cat:'corps', ar:'قَلْب', tr:'qalb', fr:'Cœur', ex_ar:'قَلْبِي يُحِبُّكَ كَثِيرًا', ex_fr:'Mon cœur t\'aime beaucoup', mnemonic:'🧠 "Qalb" = cœur ET retournement (se retourner). Le cœur = ce qui se retourne d\'émotion !' },
+  { id:113, cat:'corps', ar:'ظَهْر', tr:'ẓahr', fr:'Dos', ex_ar:'يُؤْلِمُنِي ظَهْرِي مِنَ الجُلُوس', ex_fr:'Mon dos me fait mal d\'être assis', mnemonic:'🧠 "Ẓahr" = dos ET face visible. En arabe, le dos = la face externe. ẒAHR = visible !' },
+  { id:114, cat:'corps', ar:'صَدْر', tr:'ṣadr', fr:'Poitrine', ex_ar:'أَشْعُرُ بِأَلَمٍ فِي الصَّدْر', ex_fr:'Je sens une douleur dans la poitrine', mnemonic:'🧠 "Ṣadr" = poitrine ET premier rang. Le premier = celui qui met la poitrine en avant !' },
+  { id:115, cat:'corps', ar:'أَسْنَان', tr:'asnān', fr:'Dents', ex_ar:'يَجِبُ تَنْظِيفُ الأَسْنَانِ يَوْمِيًّا', ex_fr:'Il faut se brosser les dents chaque jour', mnemonic:'🧠 "Sinn" = dent (singulier). "Asnān" = dents. SN = le bruit des dents !' },
+  { id:116, cat:'corps', ar:'شَعَر', tr:'shaʿar', fr:'Cheveux', ex_ar:'شَعَرُهَا طَوِيلٌ وَجَمِيل', ex_fr:'Ses cheveux sont longs et beaux', mnemonic:'🧠 "Shaʿar" = cheveux ET poésie/sensation. Les cheveux = ce qu\'on SENT (shahara = sentir). CHARME !' },
+  { id:117, cat:'corps', ar:'وَجْه', tr:'wajh', fr:'Visage', ex_ar:'وَجْهُهُ يُعَبِّرُ عَن فَرَحِه', ex_fr:'Son visage exprime sa joie', mnemonic:'🧠 "Wajh" = visage ET direction/côté. Ce vers quoi tu regardes = le visage de l\'autre !' },
+  { id:118, cat:'corps', ar:'أَلَم', tr:'alam', fr:'Douleur', ex_ar:'أَشْعُرُ بِأَلَمٍ شَدِيد', ex_fr:'Je ressens une douleur intense', mnemonic:'🧠 "Alam" = douleur. En espagnol "alma" = âme. La douleur touche l\'âme. ĀLiM = douloureux !' },
+  { id:119, cat:'corps', ar:'مَرِيض', tr:'marīḍ', fr:'Malade', ex_ar:'أَنَا مَرِيضٌ وَأَحْتَاجُ طَبِيبًا', ex_fr:'Je suis malade et j\'ai besoin d\'un médecin', mnemonic:'🧠 "Marīḍ" = malade. "Maraḍ" = maladie. MARA-ĪḌ = MALADE ICI (ḍ le D emphatique du corps souffrant) !' },
+  { id:120, cat:'corps', ar:'طَبِيب', tr:'ṭabīb', fr:'Médecin', ex_ar:'ذَهَبْتُ إِلَى الطَّبِيبِ أَمْس', ex_fr:'Je suis allé chez le médecin hier', mnemonic:'🧠 "Ṭabīb" = médecin. "Ṭibb" = médecine. ṬA-BĪB = THE BIG BISS (la grande guérison) !' },
+
+  // VERBES CLÉS (20)
+  { id:121, cat:'verbes', ar:'يَكُون', tr:'yakūn', fr:'Être / Il est', ex_ar:'يَجِبُ أَن يَكُونَ الإِنْسَانُ صَادِقًا', ex_fr:'L\'homme doit être honnête', mnemonic:'🧠 "Kān/yakūn" = être. "Kāna" = il était. Fondamental en arabe. K-Ā-N = la racine de l\'existence.' },
+  { id:122, cat:'verbes', ar:'يُرِيد', tr:'yurīd', fr:'Vouloir', ex_ar:'مَاذَا تُرِيد؟', ex_fr:'Que veux-tu ?', mnemonic:'🧠 "Yurīd" = il veut. "Irāda" = volonté. I-RĀDA = I WANT DA (je veux ça) !' },
+  { id:123, cat:'verbes', ar:'يَأْكُل', tr:'yaʾkul', fr:'Manger', ex_ar:'يَأْكُلُ الطِّفْلُ الحَلْوَى', ex_fr:'L\'enfant mange des sucreries', mnemonic:'🧠 "Akl" = manger/nourriture. "Yaʾkul" = il mange. Pense à "ACKLE" comme "mâcher" !' },
+  { id:124, cat:'verbes', ar:'يَشْرَب', tr:'yashrab', fr:'Boire', ex_ar:'يَشْرَبُ القَهْوَةَ كُلَّ صَبَاح', ex_fr:'Il boit du café chaque matin', mnemonic:'🧠 "Sharb" = boisson. "Shurba" = soupe (boisson épaisse). YA-SHRAB = il sirote !' },
+  { id:125, cat:'verbes', ar:'يَذْهَب', tr:'yadhhab', fr:'Aller', ex_ar:'أَيْنَ تَذْهَب يَا صَدِيقِي؟', ex_fr:'Où vas-tu, mon ami ?', mnemonic:'🧠 "Dhahab" = or (le métal) ET aller. Aller = partir vers l\'or ! YADHAB = il S\'EN VA en or !' },
+  { id:126, cat:'verbes', ar:'يَجِيء', tr:'yajīʾ', fr:'Venir', ex_ar:'مَتَى تَجِيء؟ أَنَا أَنْتَظِرُكَ', ex_fr:'Quand viens-tu ? Je t\'attends', mnemonic:'🧠 "Jāʾa" = il est venu. "Yajīʾ" = il vient. JAH-IʾA = JE VIENS (j\'arrive) !' },
+  { id:127, cat:'verbes', ar:'يَفْهَم', tr:'yafham', fr:'Comprendre', ex_ar:'هَل تَفْهَمُ مَا أَقُول؟', ex_fr:'Est-ce que tu comprends ce que je dis ?', mnemonic:'🧠 "Fahm" = compréhension. "FHAM" = comprends ! FAH-AM = I AM UNDERSTOOD !' },
+  { id:128, cat:'verbes', ar:'يَتَكَلَّم', tr:'yatakallam', fr:'Parler', ex_ar:'يَتَكَلَّمُ العَرَبِيَّةَ بِطَلَاقَة', ex_fr:'Il parle arabe couramment', mnemonic:'🧠 "Kalām" = parole/discours. "Yatakallam" = il parle. KALAM = ma PAROLE !' },
+  { id:129, cat:'verbes', ar:'يَكْتُب', tr:'yaktub', fr:'Écrire', ex_ar:'يَكْتُبُ رِسَالَةً لِأُمِّه', ex_fr:'Il écrit une lettre à sa mère', mnemonic:'🧠 "Kitāb" = livre (de KTB = écrire). "Yaktub" = il écrit. KI-TAB = LA TABLETTE écrite !' },
+  { id:130, cat:'verbes', ar:'يَقْرَأ', tr:'yaqraʾ', fr:'Lire', ex_ar:'يَقْرَأُ القُرْآنَ كُلَّ يَوْم', ex_fr:'Il lit le Coran chaque jour', mnemonic:'🧠 "Qurʾān" vient de "qaraʾa" = lire ! Le Coran = "La Lecture". QA-RAʾ = QUI LIT !' },
+  { id:131, cat:'verbes', ar:'يَعْرِف', tr:'yaʿrif', fr:'Savoir / Connaître', ex_ar:'هَل تَعْرِفُ الطَّرِيقَ إِلَى المَسْجِد؟', ex_fr:'Connais-tu le chemin vers la mosquée ?', mnemonic:'🧠 "Maʿrifa" = connaissance. "Aarif" = celui qui sait. ʿARIF = ARABIC Knowledge !' },
+  { id:132, cat:'verbes', ar:'يُحِب', tr:'yuḥibb', fr:'Aimer', ex_ar:'أُحِبُّ اللُّغَةَ العَرَبِيَّة', ex_fr:'J\'aime la langue arabe', mnemonic:'🧠 "Ḥubb" = amour. "Ḥabīb" = bien-aimé. HU-BB = le cœur qui bat BOOM-BOOM !' },
+  { id:133, cat:'verbes', ar:'يَعْمَل', tr:'yaʿmal', fr:'Travailler / Faire', ex_ar:'يَعْمَلُ مُهَنْدِسًا فِي أَرَامْكُو', ex_fr:'Il travaille comme ingénieur chez Aramco', mnemonic:'🧠 "ʿAmal" = travail/action. "ʿAmil" = travailleur. ʿAMAL = Œuvre !' },
+  { id:134, cat:'verbes', ar:'يَسْكُن', tr:'yaskun', fr:'Habiter / Vivre', ex_ar:'يَسْكُنُ فِي الرِّيَاضِ مُنْذُ عَشْرِ سَنَوَات', ex_fr:'Il habite à Riyad depuis dix ans', mnemonic:'🧠 "Sukūn" = calme/silence (aussi signe orthographique). Habiter = s\'installer dans le CALME !' },
+  { id:135, cat:'verbes', ar:'يَنَام', tr:'yanām', fr:'Dormir', ex_ar:'يَنَامُ الطِّفْلُ مُبَكِّرًا', ex_fr:'L\'enfant dort tôt', mnemonic:'🧠 "Nawm" = sommeil. "Yanām" = il dort. Pense à "NAM" = dormir en argot français !' },
+  { id:136, cat:'verbes', ar:'يُسَافِر', tr:'yusāfir', fr:'Voyager', ex_ar:'يُسَافِرُ إِلَى أُوْرُوبَّا كُلَّ صَيْف', ex_fr:'Il voyage en Europe chaque été', mnemonic:'🧠 "Safar" = voyage. Même racine que "safari" ! SAFARI vient de l\'arabe SAFAR !' },
+  { id:137, cat:'verbes', ar:'يُسَاعِد', tr:'yusāʿid', fr:'Aider', ex_ar:'هَل يُمْكِنُكَ أَن تُسَاعِدَنِي؟', ex_fr:'Peux-tu m\'aider ?', mnemonic:'🧠 "Musāʿada" = aide. "Saʿd" = bonheur/bonheur. Aider = rendre heureux. MU-SĀʿID !' },
+  { id:138, cat:'verbes', ar:'يَشْتَرِي', tr:'yashtarī', fr:'Acheter', ex_ar:'يَشْتَرِي هَدَايَا لِعَائِلَتِه', ex_fr:'Il achète des cadeaux pour sa famille', mnemonic:'🧠 "Shirāʾ" = achat. "Yashtarī" = il achète. SHIRA = CHÈRE (acheter c\'est payer cher) !' },
+  { id:139, cat:'verbes', ar:'يَبِيع', tr:'yabīʿ', fr:'Vendre', ex_ar:'يَبِيعُ التَّمْرَ فِي السُّوق', ex_fr:'Il vend des dattes au marché', mnemonic:'🧠 "Bayʿ" = vente. "Bāʾiʿ" = vendeur. BA-ĪʿA = BUY-ʿA (acheter en anglais) !' },
+  { id:140, cat:'verbes', ar:'يَتَعَلَّم', tr:'yataʿallam', fr:'Apprendre', ex_ar:'يَتَعَلَّمُ اللُّغَةَ العَرَبِيَّةَ بِجِدّ', ex_fr:'Il apprend l\'arabe sérieusement', mnemonic:'🧠 "ʿIlm" = science/savoir. "Muʿallim" = enseignant. YA-TAʿALLAM = il s\'ÉLÈVE dans le savoir !' },
+
+  // ÉMOTIONS (15)
+  { id:141, cat:'emotions', ar:'سَعِيد', tr:'saʿīd', fr:'Heureux', ex_ar:'أَنَا سَعِيدٌ لِرُؤْيَتِكَ', ex_fr:'Je suis heureux de te voir', mnemonic:'🧠 "Saʿīd" = heureux ET prénom très commun. SAʿĪD = "SAID" (le heureux) !' },
+  { id:142, cat:'emotions', ar:'حَزِين', tr:'ḥazīn', fr:'Triste', ex_ar:'هُوَ حَزِينٌ بَعْدَ الفِرَاق', ex_fr:'Il est triste après la séparation', mnemonic:'🧠 "Ḥuzn" = tristesse. "Ḥazīn" = triste. HA-ZĪN = "ha zin" (ah la zinc de la tristesse) !' },
+  { id:143, cat:'emotions', ar:'خَائِف', tr:'khāʾif', fr:'Effrayé / Apeuré', ex_ar:'الطِّفْلُ خَائِفٌ مِنَ الظَّلَام', ex_fr:'L\'enfant a peur du noir', mnemonic:'🧠 "Khawf" = peur. "Khāʾif" = celui qui a peur. KHA-ĪF = QUAKE (trembler) IF !' },
+  { id:144, cat:'emotions', ar:'غَاضِب', tr:'ghāḍib', fr:'En colère', ex_ar:'لِمَاذَا أَنْتَ غَاضِب؟', ex_fr:'Pourquoi es-tu en colère ?', mnemonic:'🧠 "Ghaḍab" = colère. "Ghāḍib" = en colère. GHA-ḌIB = "ça me GADE" (ça m\'énerve) !' },
+  { id:145, cat:'emotions', ar:'مُتَعَب', tr:'mutaʿab', fr:'Fatigué', ex_ar:'أَنَا مُتَعَبٌ مِنَ العَمَل', ex_fr:'Je suis fatigué du travail', mnemonic:'🧠 "Taʿab" = fatigue/peine. "Mutaʿab" = fatigué. MUTA-ʿAB = "ma tête est abasourdie" !' },
+  { id:146, cat:'emotions', ar:'فَرَح', tr:'faraḥ', fr:'Joie', ex_ar:'مَلَأَ الفَرَحُ قَلْبَهُ', ex_fr:'La joie a rempli son cœur', mnemonic:'🧠 "Faraḥ" = joie. Prénom féminin commun. FA-RAḤ = PHARAON heureux (pharaoh + joie) !' },
+  { id:147, cat:'emotions', ar:'أَمَل', tr:'amal', fr:'Espoir', ex_ar:'لَا تَفْقِدِ الأَمَل أَبَدًا', ex_fr:'Ne perds jamais espoir', mnemonic:'🧠 "Amal" = espoir ET prénom féminin. Pense à AMÉLIE pleine d\'espoir. AMAL = AMÉLIE !' },
+  { id:148, cat:'emotions', ar:'خَجَل', tr:'khajal', fr:'Honte / Timidité', ex_ar:'شَعَرَ بِالخَجَلِ أَمَامَ الجَمِيع', ex_fr:'Il a ressenti la honte devant tout le monde', mnemonic:'🧠 "Khajal" = honte/timidité. KHA-JAL = "ça me jaunit" (la rougeur de la honte) !' },
+  { id:149, cat:'emotions', ar:'عِشْق', tr:'ʿishq', fr:'Passion / Amour intense', ex_ar:'عِشْقُهُ لِلمُوسِيقَى وَاضِح', ex_fr:'Sa passion pour la musique est évidente', mnemonic:'🧠 "ʿIshq" = passion extrême. Plus fort que ḥubb (amour). ʿISHQ = INTENSE SHOCK de sentiment !' },
+  { id:150, cat:'emotions', ar:'اِشْتِيَاق', tr:'ishtiyāq', fr:'Nostalgie / Mélancolie', ex_ar:'أَشْعُرُ بِاشْتِيَاقٍ لِبَلَدِي', ex_fr:'Je ressens la nostalgie de mon pays', mnemonic:'🧠 "Ishtiyāq" = nostalgie. "Shawq" = désir ardent. ISHTI-YĀQ = "je SUIS TI (ici) YĀ (oh)" loin de chez moi !' },
+  { id:151, cat:'emotions', ar:'رَاحَة', tr:'rāḥa', fr:'Confort / Repos', ex_ar:'أَحْتَاجُ إِلَى الرَّاحَة', ex_fr:'J\'ai besoin de repos', mnemonic:'🧠 "Rāḥa" = repos/confort ET paume de la main. Repose-toi dans la PAUME du temps !' },
+  { id:152, cat:'emotions', ar:'ثِقَة', tr:'thiqa', fr:'Confiance', ex_ar:'أَثِقُ بِهِ ثِقَةً كَامِلَة', ex_fr:'J\'ai pleinement confiance en lui', mnemonic:'🧠 "Thiqa" = confiance. "Wāthiq" = confiant. THI-QA = "C\'EST OK" (confiance totale) !' },
+  { id:153, cat:'emotions', ar:'شَوْق', tr:'shawq', fr:'Désir ardent / Envie', ex_ar:'أَشْتَاقُ إِلَيْكَ كَثِيرًا', ex_fr:'Tu me manques beaucoup', mnemonic:'🧠 "Shawq" = désir ardent. "Ashāq" = je manque de. SHAWQ = SHOCK du manque !' },
+  { id:154, cat:'emotions', ar:'غَيْرَة', tr:'ghayra', fr:'Jalousie', ex_ar:'الغَيْرَةُ تُفْسِدُ العَلَاقَات', ex_fr:'La jalousie abîme les relations', mnemonic:'🧠 "Ghayra" = jalousie. "Ghayr" = autre/différent. La jalousie naît de l\'AUTRE !' },
+  { id:155, cat:'emotions', ar:'كَرَم', tr:'karam', fr:'Générosité', ex_ar:'الكَرَمُ صِفَةٌ مُهِمَّةٌ فِي الثَّقَافَة العَرَبِيَّة', ex_fr:'La générosité est une valeur importante dans la culture arabe', mnemonic:'🧠 "Karam" = générosité. "Karīm" = généreux (attribut de Dieu). KA-RAM = CARAMEL (la douceur donnée) !' },
+
+  // QUOTIDIEN (20)
+  { id:156, cat:'quotidien', ar:'بَيْت', tr:'bayt', fr:'Maison / Foyer', ex_ar:'البَيْتُ هُوَ المَكَانُ الأَفْضَل', ex_fr:'La maison est le meilleur endroit', mnemonic:'🧠 "Bayt" = maison. "Bayt Laḥm" = Bethléem (maison du pain). BAYT = ma BASE.' },
+  { id:157, cat:'quotidien', ar:'غُرْفَة', tr:'ghurfa', fr:'Chambre / Pièce', ex_ar:'غُرْفَتِي صَغِيرَةٌ لَكِنَّهَا مُرِيحَة', ex_fr:'Ma chambre est petite mais confortable', mnemonic:'🧠 "Ghurfa" = chambre. "Gharf" = une poignée. La chambre = une poignée d\'espace !' },
+  { id:158, cat:'quotidien', ar:'مَدْرَسَة', tr:'madrasa', fr:'École', ex_ar:'أَذْهَبُ إِلَى المَدْرَسَةِ كُلَّ يَوْم', ex_fr:'Je vais à l\'école chaque jour', mnemonic:'🧠 "Madrasa" → passé dans toutes les langues (MADRASSA). Lieu d\'étude. MAD-RASA = la DRASA !' },
+  { id:159, cat:'quotidien', ar:'كِتَاب', tr:'kitāb', fr:'Livre', ex_ar:'أَقْرَأُ كِتَابًا كُلَّ أُسْبُوع', ex_fr:'Je lis un livre chaque semaine', mnemonic:'🧠 "Kitāb" = livre. Racine K-T-B = écrire. Maktab = bureau, Kātib = écrivain. !' },
+  { id:160, cat:'quotidien', ar:'سَيَّارَة', tr:'sayyāra', fr:'Voiture', ex_ar:'اِشْتَرَيْتُ سَيَّارَةً جَدِيدَة', ex_fr:'J\'ai acheté une nouvelle voiture', mnemonic:'🧠 "Sayyāra" = voiture. Même racine "sāra" = voyager/marcher. La voiture = ce qui ROULE !' },
+  { id:161, cat:'quotidien', ar:'هَاتِف', tr:'hātif', fr:'Téléphone', ex_ar:'نَسِيتُ هَاتِفِي فِي البَيْت', ex_fr:'J\'ai oublié mon téléphone à la maison', mnemonic:'🧠 "Hātif" = voix qui appelle de loin (poésie classique) → devenu "téléphone". HĀ-TIF = HOTLINE !' },
+  { id:162, cat:'quotidien', ar:'نَقُود', tr:'nuqūd', fr:'Argent (monnaie)', ex_ar:'لَا يُوجَدُ نُقُودٌ كَافِيَة', ex_fr:'Il n\'y a pas assez d\'argent', mnemonic:'🧠 "Naqd" = argent comptant/critique. "Nāqid" = critique (celui qui pèse les mots comme les pièces).' },
+  { id:163, cat:'quotidien', ar:'سُوق', tr:'sūq', fr:'Marché', ex_ar:'نَذْهَبُ إِلَى السُّوقِ كُلَّ جُمْعَة', ex_fr:'On va au marché chaque vendredi', mnemonic:'🧠 "Sūq" → "SOUK" en français ! Tu le connais déjà. Le souk = le marché. SŪKH !' },
+  { id:164, cat:'quotidien', ar:'فُنْدُق', tr:'funduq', fr:'Hôtel', ex_ar:'الفُنْدُقُ خَمْسُ نُجُوم', ex_fr:'L\'hôtel est cinq étoiles', mnemonic:'🧠 "Funduq" → vient du grec "pandokheion" (auberge). FUN-DUQ = le FUN DÉPASSE !' },
+  { id:165, cat:'quotidien', ar:'مَسْجِد', tr:'masjid', fr:'Mosquée', ex_ar:'يُصَلِّي فِي المَسْجِدِ خَمْسَ مَرَّات', ex_fr:'Il prie à la mosquée cinq fois', mnemonic:'🧠 "Masjid" = lieu de prosternation (sajada = se prosterner). MAS-JID = MAS que JE me prosterne !' },
+  { id:166, cat:'quotidien', ar:'مَكْتَب', tr:'maktab', fr:'Bureau / Office', ex_ar:'مَكْتَبِي فِي الطَّابِقِ الخَامِس', ex_fr:'Mon bureau est au cinquième étage', mnemonic:'🧠 "Maktab" = lieu d\'écriture (K-T-B). MAKTABA = bibliothèque. MAK-TAB = MA TABLE de travail !' },
+  { id:167, cat:'quotidien', ar:'حَمَّام', tr:'ḥammām', fr:'Salle de bain / Toilettes', ex_ar:'الحَمَّامُ فِي آخِرِ المَمَرّ', ex_fr:'Les toilettes sont au fond du couloir', mnemonic:'🧠 "Ḥammām" = bain/hammam → passé en français directement ! Le hammam arabe !' },
+  { id:168, cat:'quotidien', ar:'مَلَابِس', tr:'malābis', fr:'Vêtements', ex_ar:'اِشْتَرَيْتُ مَلَابِسَ جَدِيدَة للعِيد', ex_fr:'J\'ai acheté de nouveaux vêtements pour l\'Aïd', mnemonic:'🧠 "Malābis" = vêtements. "Labisa" = porter (vêtements). MA-LĀ-BIS = MA LIBERTÉ de style !' },
+  { id:169, cat:'quotidien', ar:'لَوْن', tr:'lawn', fr:'Couleur', ex_ar:'مَا هُوَ لَوْنُكَ المُفَضَّل؟', ex_fr:'Quelle est ta couleur préférée ?', mnemonic:'🧠 "Lawn" = couleur. Pense à LAWN (pelouse en anglais) qui est verte. LAWN = couleur naturelle !' },
+  { id:170, cat:'quotidien', ar:'كَبِير', tr:'kabīr', fr:'Grand / Important', ex_ar:'هَذَا قَرَارٌ كَبِيرٌ جِدًّا', ex_fr:'C\'est une très grande décision', mnemonic:'🧠 "Kabīr" = grand. "Al-Kabīr" = attribut de Dieu (Le Grand). KA-BĪR = CA-BIG-R !' },
+  { id:171, cat:'quotidien', ar:'صَغِير', tr:'ṣaghīr', fr:'Petit', ex_ar:'هَذَا بَيْتٌ صَغِيرٌ لَكِنَّهُ جَمِيل', ex_fr:'C\'est une petite maison mais belle', mnemonic:'🧠 "Ṣaghīr" = petit. "Ṣaghīra" (féminin). ṢA-GHĪR = "C\'est p\'tit ça ?" Ghīr = non !' },
+  { id:172, cat:'quotidien', ar:'جَدِيد', tr:'jadīd', fr:'Nouveau', ex_ar:'أُرِيدُ شَيْئًا جَدِيدًا', ex_fr:'Je veux quelque chose de nouveau', mnemonic:'🧠 "Jadīd" = nouveau. "Tajdīd" = renouvellement. JA-DĪD = J\'ARRIVE DÉCIDÉ (fraîcheur) !' },
+  { id:173, cat:'quotidien', ar:'قَدِيم', tr:'qadīm', fr:'Ancien / Vieux', ex_ar:'أُحِبُّ الأَحْيَاءَ القَدِيمَة', ex_fr:'J\'aime les vieux quartiers', mnemonic:'🧠 "Qadīm" = vieux. "Qidam" = ancienneté/éternité (attribut divin). QA-DĪM = QUI DIME (qui tire du passé) !' },
+  { id:174, cat:'quotidien', ar:'جَمِيل', tr:'jamīl', fr:'Beau / Belle', ex_ar:'المَدِينَةُ القَدِيمَةُ جَمِيلَةٌ جِدًّا', ex_fr:'La vieille ville est très belle', mnemonic:'🧠 "Jamīl" = beau. Prénom courant. "Jamāl" = beauté. JA-MĪL = "ça ME FEEL bien" !' },
+  { id:175, cat:'quotidien', ar:'مُمْتَاز', tr:'mumtāz', fr:'Excellent', ex_ar:'عَمَلُكَ مُمْتَازٌ يَا صَدِيقِي', ex_fr:'Ton travail est excellent, mon ami', mnemonic:'🧠 "Mumtāz" = excellent. MUM-TĀZ = MAMAN est TAZÉE (ravie). Aussi prénom turc (Mumtaz Mahal → Taj Mahal) !' },
+
+  // NATURE (10)
+  { id:176, cat:'nature', ar:'شَمْس', tr:'shams', fr:'Soleil', ex_ar:'الشَّمْسُ سَاطِعَةٌ اليَوْم', ex_fr:'Le soleil brille aujourd\'hui', mnemonic:'🧠 "Shams" = soleil. Prénom féminin (Shams al-Dīn). SHAMS = CHAUD-MS (chaud comme le soleil) !' },
+  { id:177, cat:'nature', ar:'قَمَر', tr:'qamar', fr:'Lune', ex_ar:'القَمَرُ جَمِيلٌ فِي اللَّيْلَة', ex_fr:'La lune est belle cette nuit', mnemonic:'🧠 "Qamar" = lune. Prénom commun. "Qamrī" = lunaire. QA-MAR = "QUI MA R" = qui ma ravie (la lune ravit) !' },
+  { id:178, cat:'nature', ar:'نَجْم', tr:'najm', fr:'Étoile', ex_ar:'النُّجُومُ كَثِيرَةٌ فِي الصَّحْرَاء', ex_fr:'Les étoiles sont nombreuses dans le désert', mnemonic:'🧠 "Najm" = étoile. "Najma" = prénom féminin. NAJ-M = NIGHT + eMergence !' },
+  { id:179, cat:'nature', ar:'بَحْر', tr:'baḥr', fr:'Mer', ex_ar:'البَحْرُ الأَحْمَرُ رَائِعٌ للغَوْص', ex_fr:'La mer Rouge est magnifique pour la plongée', mnemonic:'🧠 "Baḥr" = mer. "Baḥrayn" = Bahreïn (les deux mers). BA-ḤR = BIG HORIZON !' },
+  { id:180, cat:'nature', ar:'جَبَل', tr:'jabal', fr:'Montagne', ex_ar:'جَبَلُ طُوَيق مَشْهُورٌ فِي نَجْد', ex_fr:'Le Jebel Tuwaiq est célèbre dans le Najd', mnemonic:'🧠 "Jabal" = montagne. "Jabal Ṭāriq" = Gibraltar (montagne de Tariq). JA-BAL = GRANDE BASE !' },
+  { id:181, cat:'nature', ar:'صَحْرَاء', tr:'ṣaḥrāʾ', fr:'Désert', ex_ar:'الصَّحْرَاءُ العَرَبِيَّةُ الكُبْرَى وَاسِعَة', ex_fr:'Le Grand Désert Arabique est vaste', mnemonic:'🧠 "Ṣaḥrāʾ" = désert (le nom du Sahara vient de là !). ṢAḤ-RĀʾ = SAHARA !' },
+  { id:182, cat:'nature', ar:'مَطَر', tr:'maṭar', fr:'Pluie', ex_ar:'نَادِرًا مَا يَهْطِلُ المَطَرُ هُنَا', ex_fr:'La pluie tombe rarement ici', mnemonic:'🧠 "Maṭar" = pluie. Même racine que "maṭār" (aéroport) ? Non, mais les deux "tombent du ciel" !' },
+  { id:183, cat:'nature', ar:'رِيح', tr:'rīḥ', fr:'Vent', ex_ar:'الرِّيحُ شَدِيدَةٌ اليَوْم', ex_fr:'Le vent est fort aujourd\'hui', mnemonic:'🧠 "Rīḥ" = vent ET odeur. Le vent porte les odeurs. RĪḤ = REACH (atteindre comme le vent) !' },
+  { id:184, cat:'nature', ar:'شَجَرَة', tr:'shajara', fr:'Arbre', ex_ar:'شَجَرَةُ النَّخِيلِ رَمْزٌ سُعُودِيّ', ex_fr:'Le palmier est un symbole saoudien', mnemonic:'🧠 "Shajara" = arbre. "Shajara" = querelle aussi (branches qui se battent !). SHA-JARA !' },
+  { id:185, cat:'nature', ar:'نَهْر', tr:'nahr', fr:'Rivière / Fleuve', ex_ar:'لَيْسَ فِي السُّعُودِيَّةِ أَنْهَارٌ كَثِيرَة', ex_fr:'Il n\'y a pas beaucoup de rivières en Arabie Saoudite', mnemonic:'🧠 "Nahr" = rivière. "Nahr" = rugir/couler fort. Le fleuve RUGIT. NA-HR = NULL HOUR (jamais à sec) !' },
+
+  // MOTS SUPPLÉMENTAIRES (15 pour atteindre 200)
+  { id:186, cat:'quotidien', ar:'نَعَم', tr:'naʿam', fr:'Oui', ex_ar:'نَعَم، أَنَا مُوَافِق', ex_fr:'Oui, je suis d\'accord', mnemonic:'🧠 "Naʿam" = oui. Pense à "NAAM" = NAME (affirmer son nom = dire oui). Ultra-court !' },
+  { id:187, cat:'quotidien', ar:'لَا', tr:'lā', fr:'Non', ex_ar:'لَا، لَا أُرِيد هَذَا', ex_fr:'Non, je ne veux pas ça', mnemonic:'🧠 "Lā" = non. La même valeur en français "là" mais avec un sens négatif. L-Ā = LA NÉGATION !' },
+  { id:188, cat:'quotidien', ar:'مَاذَا', tr:'mādhā', fr:'Quoi / Que ?', ex_ar:'مَاذَا تَفْعَل الآن؟', ex_fr:'Que fais-tu maintenant ?', mnemonic:'🧠 "Mādhā" = quoi. "Mā" = quoi + "dhā" = ça. WHAT IS THAT = mādhā !' },
+  { id:189, cat:'quotidien', ar:'مَتَى', tr:'matā', fr:'Quand ?', ex_ar:'مَتَى تَعُود مِنَ السَّفَر؟', ex_fr:'Quand reviens-tu du voyage ?', mnemonic:'🧠 "Matā" = quand. Pense à "META" (au-delà) — au-delà de QUAND ? MA-TĀ !' },
+  { id:190, cat:'quotidien', ar:'لِمَاذَا', tr:'limādhā', fr:'Pourquoi ?', ex_ar:'لِمَاذَا تَبْكِي يَا حَبِيبِي؟', ex_fr:'Pourquoi pleures-tu, mon chéri ?', mnemonic:'🧠 "Limādhā" = pourquoi. "Li" = pour + "mādhā" = quoi. Pour quoi = pourquoi !' },
+  { id:191, cat:'quotidien', ar:'كَمْ', tr:'kam', fr:'Combien ?', ex_ar:'كَمِ الثَّمَن؟', ex_fr:'Quel est le prix ?', mnemonic:'🧠 "Kam" = combien. Ultra-court. Pense à "QUANTUM" (quantité). KAM = quantité !' },
+  { id:192, cat:'quotidien', ar:'مَع', tr:'maʿa', fr:'Avec', ex_ar:'سَأَذْهَبُ مَعَكَ إِلَى السُّوق', ex_fr:'J\'irai avec toi au marché', mnemonic:'🧠 "Maʿa" = avec. "Maʿa l-salāma" = au revoir (avec la paix). MAʿA = MAKE IT WITH !' },
+  { id:193, cat:'quotidien', ar:'بِدُون', tr:'bidūn', fr:'Sans', ex_ar:'أُرِيدُ القَهْوَةَ بِدُونِ سُكَّر', ex_fr:'Je veux le café sans sucre', mnemonic:'🧠 "Bidūn" = sans. "Bi" = avec + "dūn" = en dessous/sans. BI-DŪN = BE-DONE (sans finir) !' },
+  { id:194, cat:'quotidien', ar:'كُل', tr:'kull', fr:'Tout / Chaque', ex_ar:'كُلُّ إِنْسَانٍ يَحْتَاجُ مَاء', ex_fr:'Chaque être humain a besoin d\'eau', mnemonic:'🧠 "Kull" = tout. "Kullī" = totalement. KULL = ALL (tout en arabe = comme "call" qui appelle tout).' },
+  { id:195, cat:'quotidien', ar:'شَيء', tr:'shayʾ', fr:'Chose', ex_ar:'كُلُّ شَيْءٍ مُمْكِن', ex_fr:'Tout est possible', mnemonic:'🧠 "Shayʾ" = chose. "Lā shayʾ" = rien. SHA-YʾA = quelque chose qui SHA (éclate) !' },
+  { id:196, cat:'quotidien', ar:'كَثِير', tr:'kathīr', fr:'Beaucoup', ex_ar:'شُكْرًا كَثِيرًا عَلَى صَبْرِكَ', ex_fr:'Merci beaucoup pour ta patience', mnemonic:'🧠 "Kathīr" = beaucoup. "Kathīr min al-nās" = beaucoup de gens. KA-THĪR = CATTLE (beaucoup comme un troupeau) !' },
+  { id:197, cat:'quotidien', ar:'قَلِيل', tr:'qalīl', fr:'Peu', ex_ar:'أَحْتَاجُ قَلِيلًا مِنَ الوَقْت', ex_fr:'J\'ai besoin de peu de temps', mnemonic:'🧠 "Qalīl" = peu. Opposé de kathīr. QA-LĪL = "CALME-ILL" (peu = calme la maladie du trop) !' },
+  { id:198, cat:'quotidien', ar:'جَيِّد', tr:'jayyid', fr:'Bien / Bon', ex_ar:'هَذَا جَيِّدٌ جِدًّا', ex_fr:'C\'est très bien', mnemonic:'🧠 "Jayyid" = bien. "Jayyid jiddan" = très bien. JAY-YID = "JE YIELD" (j\'approuve) !' },
+  { id:199, cat:'quotidien', ar:'مَفْهُوم', tr:'mafhūm', fr:'Compris / Concept', ex_ar:'مَفْهُوم! سَأَفْعَلُ ذَلِكَ', ex_fr:'Compris ! Je le ferai', mnemonic:'🧠 "Mafhūm" = compris/concept. "Fahm" = compréhension. MAF-HŪM = "MA FLEMME HUM ?" Non : j\'ai compris !' },
+  { id:200, cat:'quotidien', ar:'بِالتَّوْفِيق', tr:'bi-t-tawfīq', fr:'Bonne chance', ex_ar:'بِالتَّوْفِيقِ فِي دِرَاسَتِكَ', ex_fr:'Bonne chance dans tes études', mnemonic:'🧠 "Tawfīq" = succès/réussite (don de Dieu). BI-TAWFĪQ = AVEC LA RÉUSSITE. Prénom aussi !' },
+];
+
+// State
+let currentCat = 'all';
+let searchQuery = '';
+let mnemoOnly = false;
+
+// Build tabs
+const tabsContainer = document.getElementById('tabsContainer');
+categories.forEach(cat => {
+  const btn = document.createElement('button');
+  btn.className = 'tab' + (cat.id === 'all' ? ' active' : '');
+  btn.dataset.cat = cat.id;
+  btn.innerHTML = `<span class="cat-emoji">${cat.emoji}</span>${cat.label}`;
+  btn.onclick = () => {
+    currentCat = cat.id;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  };
+  tabsContainer.appendChild(btn);
+});
+
+function toggleMnemoOnly() {
+  mnemoOnly = !mnemoOnly;
+  document.getElementById('toggleMnemo').classList.toggle('active', mnemoOnly);
+  render();
+}
+
+function getFiltered() {
+  return words.filter(w => {
+    if (currentCat !== 'all' && w.cat !== currentCat) return false;
+    if (mnemoOnly && !w.mnemonic) return false;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      return w.fr.toLowerCase().includes(q) || w.ar.includes(searchQuery) || w.tr.toLowerCase().includes(q);
+    }
+    return true;
+  });
+}
+
+function render() {
+  const filtered = getFiltered();
+  const container = document.getElementById('wordsContainer');
+  const countEl = document.getElementById('countDisplay');
+  const progress = document.getElementById('progressFill');
+
+  countEl.textContent = filtered.length;
+  progress.style.width = (filtered.length / words.length * 100) + '%';
+
+  // Set category color on container
+  container.dataset.cat = currentCat === 'all' ? '' : currentCat;
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="no-results">Aucun mot trouvé 🔍</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+  filtered.forEach((w, i) => {
+    const card = document.createElement('div');
+    card.className = 'word-card';
+    card.dataset.cat = w.cat;
+    card.style.animationDelay = (i % 20 * 30) + 'ms';
+
+    card.innerHTML = `
+      <div class="card-top">
+        <div>
+          <div class="arabic-word">${w.ar}</div>
+          <div class="transliteration">${w.tr}</div>
+          <div class="translation">${w.fr}</div>
+        </div>
+        <span class="word-num">#${w.id}</span>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">📖 Exemple</div>
+          <div class="example-ar">${w.ex_ar}</div>
+          <div class="example-fr">${w.ex_fr}</div>
+        </div>
+        ${w.mnemonic ? `
+        <div class="detail-section">
+          <div class="detail-label">💡 Mnémotechnique</div>
+          <div class="mnemonic">${w.mnemonic}</div>
+        </div>` : ''}
+      </div>
+    `;
+
+    card.onclick = () => {
+      card.classList.toggle('expanded');
+    };
+
+    container.appendChild(card);
+  });
+}
+
+// Search
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
